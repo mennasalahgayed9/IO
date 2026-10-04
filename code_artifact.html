@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>دعوة زفاف - د. عبد الرحمن & م. منة الله</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --gold-dark: #8B6508;
+            --gold-main: #C5A059;
+            --gold-light: #DFCA9B;
+            --bg-cream: #FCFAF5;
+            --text-dark: #2C2621;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
+            background-attachment: fixed;
+        }
+
+        .font-amiri { font-family: 'Amiri', serif; }
+        .font-ruqaa { font-family: 'Aref Ruqaa', serif; }
+
+        .glass-container {
+            background: rgba(252, 250, 245, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(197, 160, 89, 0.1);
+        }
+
+        .gold-border {
+            position: relative;
+            border: 1px solid var(--gold-light);
+        }
+        
+        .gold-border::before, .gold-border::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-color: var(--gold-main);
+            border-style: solid;
+        }
+
+        .gold-border::before {
+            top: -4px; right: -4px;
+            border-width: 2px 2px 0 0;
+        }
+
+        .gold-border::after {
+            bottom: -4px; left: -4px;
+            border-width: 0 0 2px 2px;
+        }
+
+        /* Prevent Arabic Diacritics Clipping */
+        .name-text {
+            color: var(--gold-dark);
+            padding: 0.5rem 0;
+            line-height: 2.2;
+            text-shadow: 0px 1px 1px rgba(255,255,255,0.8);
+        }
+
+        #welcome-screen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-cream);
+            background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
+        }
+
+        .hidden-screen {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .envelope {
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .envelope:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .wax-seal {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #D4AF37 0%, #A88236 50%, #8B6508 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(139, 101, 8, 0.4), inset 0 0 15px rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.5);
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wax-seal::after {
+            content: '';
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            border: 1px dashed rgba(255,255,255,0.7);
+            border-radius: 50%;
+        }
+
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+            min-height: 100vh;
+        }
+
+        #main-content.visible-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .flower-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-main), var(--gold-dark));
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800 selection:bg-[#DFCA9B] selection:text-[#2C2621]">
+
+    <div id="particles" class="fixed inset-0 pointer-events-none"></div>
+
+    <div id="welcome-screen">
+        <div class="envelope p-10 max-w-md w-[90%] mx-auto text-center" onclick="openInvitation()">
+            <div class="wax-seal mb-8 animate-pulse">
+                <span class="font-ruqaa text-3xl text-white drop-shadow-md z-10 relative">ع & م</span>
+            </div>
+            
+            <h1 class="font-amiri text-3xl md:text-4xl font-bold text-[#8B6508] mb-4">دعوة زفاف</h1>
+            <p class="text-gray-600 text-sm md:text-base mb-8">نرحّب بكم لمشاركتنا أجمل ليالي العمر</p>
+            
+            <button class="btn-primary px-8 py-3 rounded-full text-base font-semibold shadow-lg flex items-center justify-center gap-3 mx-auto">
+                <span>فتح الدعوة</span>
+                <i class="fas fa-envelope-open-text text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="main-content" class="flex flex-col items-center justify-center py-10 px-4 relative z-10">
+        
+        <main class="w-full max-w-2xl glass-container rounded-[2.5rem] p-6 sm:p-10 md:p-14 text-center relative shadow-2xl">
+            
+            <!-- Ornament Top -->
+            <div class="flex justify-center mb-6">
+                <svg class="w-14 h-14 text-[#C5A059]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+            </div>
+
+            <!-- Bismillah -->
+            <div class="font-amiri text-2xl sm:text-3xl text-[#8B6508] font-bold mb-6 tracking-wide">
+                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+            </div>
+
+            <div class="gold-border bg-white/60 rounded-xl p-6 sm:p-8 my-8">
+                <p class="font-amiri text-lg sm:text-xl text-gray-800 leading-loose">
+                    "وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً"
+                </p>
+                <div class="mt-4 flex items-center justify-center gap-2">
+                    <span class="h-[1px] w-8 bg-[#C5A059]"></span>
+                    <span class="text-sm text-[#8B6508] font-semibold">سورة الروم</span>
+                    <span class="h-[1px] w-8 bg-[#C5A059]"></span>
+                </div>
+            </div>
+
+            <div class="my-12">
+                <p class="font-amiri text-xl text-gray-600 mb-4">بكل الحب والسرور، يتشرف العريس</p>
+                
+                <h2 class="font-ruqaa text-3xl sm:text-4xl font-bold name-text my-2">
+                    د. عَبْدُ الرَّحْمَنِ مُحَمَّد نُعْمَان
+                </h2>
+
+                <div class="flex items-center justify-center gap-4 my-6 opacity-70">
+                    <span class="h-[1px] w-12 bg-gray-400"></span>
+                    <i class="fas fa-ring text-[#C5A059] text-xl"></i>
+                    <span class="h-[1px] w-12 bg-gray-400"></span>
+                </div>
+
+                <p class="font-amiri text-xl text-gray-600 mb-4">والعروسة</p>
+
+                <h2 class="font-ruqaa text-3xl sm:text-4xl font-bold name-text my-2">
+                    م. مِنَّةُ اللَّهِ صَلَاح عَبْدُ الْحَمِيد
+                </h2>
+
+                <p class="font-cairo text-base text-gray-700 font-semibold mt-8 leading-relaxed max-w-md mx-auto">
+                    بدعوتكم لحضور حفل زفافهما المبارك، لتكتمل فرحتنا بوجودكم معنا.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-10">
+                <!-- Date -->
+                <div class="bg-white/70 p-6 rounded-2xl shadow-sm border border-[#DFCA9B]/50 flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-[#FCFAF5] border border-[#C5A059] flex items-center justify-center text-[#8B6508] text-xl mb-4">
+                        <i class="far fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">الموعد</h3>
+                    <p class="text-[#8B6508] font-black text-xl mb-1">21 أكتوبر</p>
+                    <p class="text-gray-600 font-semibold">الساعة 8:30 مساءً</p>
+                </div>
+
+                <!-- Venue -->
+                <div class="bg-white/70 p-6 rounded-2xl shadow-sm border border-[#DFCA9B]/50 flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-[#FCFAF5] border border-[#C5A059] flex items-center justify-center text-[#8B6508] text-xl mb-4">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">المكان</h3>
+                    <p class="text-[#8B6508] font-black text-xl mb-1">قاعة لورانز</p>
+                    <p class="text-gray-600 font-semibold">أسيوط</p>
+                </div>
+            </div>
+
+            <div class="bg-[#FCFAF5] p-6 rounded-2xl border border-[#DFCA9B] shadow-sm my-10">
+                <h3 class="text-[#8B6508] font-bold mb-6 text-lg">باقي على الفرح</h3>
+                <div class="grid grid-cols-4 gap-3 text-center max-w-sm mx-auto" dir="ltr">
+                    <div class="bg-white py-3 rounded-lg border border-gray-100 shadow-sm">
+                        <span id="days" class="block font-black text-2xl text-[#C5A059]">00</span>
+                        <span class="text-xs font-bold text-gray-500 mt-1 block font-cairo">يوم</span>
+                    </div>
+                    <div class="bg-white py-3 rounded-lg border border-gray-100 shadow-sm">
+                        <span id="hours" class="block font-black text-2xl text-[#C5A059]">00</span>
+                        <span class="text-xs font-bold text-gray-500 mt-1 block font-cairo">ساعة</span>
+                    </div>
+                    <div class="bg-white py-3 rounded-lg border border-gray-100 shadow-sm">
+                        <span id="minutes" class="block font-black text-2xl text-[#C5A059]">00</span>
+                        <span class="text-xs font-bold text-gray-500 mt-1 block font-cairo">دقيقة</span>
+                    </div>
+                    <div class="bg-white py-3 rounded-lg border border-gray-100 shadow-sm">
+                        <span id="seconds" class="block font-black text-2xl text-[#C5A059]">00</span>
+                        <span class="text-xs font-bold text-gray-500 mt-1 block font-cairo">ثانية</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 my-8">
+                <a href="https://maps.google.com/?cid=9538522583966102648" target="_blank" rel="noopener noreferrer" 
+                   class="w-full sm:w-auto btn-primary py-3 px-8 rounded-full flex items-center justify-center gap-3">
+                    <i class="fas fa-location-arrow"></i>
+                    <span>موقع القاعة (خريطة)</span>
+                </a>
+                
+                <button onclick="addToCalendar()" 
+                        class="w-full sm:w-auto bg-white hover:bg-gray-50 text-[#8B6508] border-2 border-[#C5A059] font-bold py-3 px-8 rounded-full transition-all duration-300 flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
+                    <i class="far fa-calendar-plus"></i>
+                    <span>تذكير في التقويم</span>
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-12 pt-6 border-t border-gray-200">
+                <p class="font-amiri text-lg sm:text-xl text-[#8B6508] font-bold mb-2">
+                    بَارَكَ اللَّهُ لَهُمَا وَبَارَكَ عَلَيْهِمَا وَجَمَعَ بَيْنَهُمَا فِي خَيْرٍ
+                </p>
+                <p class="text-sm text-gray-500">العاقبة عندكم في المسرات</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Open Invitation logic with confetti
+        function openInvitation() {
+            document.getElementById('welcome-screen').classList.add('hidden-screen');
+            document.getElementById('main-content').classList.add('visible-content');
+            
+            // Fire beautiful golden confetti
+            if (typeof confetti === 'function') {
+                const defaults = { colors: ['#D4AF37', '#C5A059', '#FCFAF5', '#8B6508'] };
+                confetti({ ...defaults, particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                setTimeout(() => confetti({ ...defaults, particleCount: 50, spread: 100, origin: { y: 0.6 } }), 500);
+            }
+        }
+
+        // Add to Google Calendar
+        function addToCalendar() {
+            const title = encodeURIComponent("زفاف د. عبد الرحمن وم. منة الله");
+            const details = encodeURIComponent("نتشرف بحضوركم حفل زفافنا. العاقبة عندكم في المسرات.");
+            const location = encodeURIComponent("قاعة لورانز، أسيوط");
+            // Format: YYYYMMDDTHHmmssZ
+            // Egypt is UTC+3 (Summer) or UTC+2. Let's use exact local time block to avoid timezone shift in Google cal link.
+            const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=20261021T173000Z/20261021T210000Z`;
+            window.open(googleCalendarUrl, '_blank');
+        }
+
+        // Countdown Timer Logic
+        function initCountdown() {
+            const currentYear = new Date().getFullYear();
+            // Target: Oct 21, 2026, 20:30 (8:30 PM)
+            let targetDate = new Date(2026, 9, 21, 20, 30, 0).getTime(); 
+
+            // If past 2026, fallback for demo purposes to next year
+            if (new Date().getTime() > targetDate) {
+                targetDate = new Date(currentYear + 1, 9, 21, 20, 30, 0).getTime();
+            }
+
+            const timerInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("days").innerText = "00";
+                    document.getElementById("hours").innerText = "00";
+                    document.getElementById("minutes").innerText = "00";
+                    document.getElementById("seconds").innerText = "00";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = days.toString().padStart(2, '0');
+                document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+                document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+            }, 1000);
+        }
+
+        // Create elegant background particles
+        function initParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'flower-particle';
+                
+                // Randomize sizes, positions, and animation delays
+                const size = Math.random() * 8 + 6;
+                const posX = Math.random() * 100;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 10;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}vw`;
+                particle.style.backgroundColor = (Math.random() > 0.5) ? '#C5A059' : '#DFCA9B';
+                particle.style.borderRadius = '50%';
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `-${delay}s`; // Start off sync
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initCountdown();
+            initParticles();
+        };
+    </script>
+</body>
+</html>
